@@ -1,5 +1,5 @@
 <template>
-  <div class="rating">
+  <div class="rating" ref="rating">
     <div class="ratings-content">
       <div class="overview">
         <div class="overview-left">
@@ -24,25 +24,115 @@
           </div>
         </div>
       </div>
+      <v-split></v-split>
+      <v-ratingselect @typeChange="typeChange" @onlyContentChange="onlyContentChange"
+                      :ratings="ratings"
+                      :select-type="selectType"
+                      :only-content="onlyContent"></v-ratingselect>
+      <div class="rating-wrapper">
+        <ul>
+          <li class="rating-item" v-for="(rating,key) in ratings" :key="key" v-show="needShow(rating.rateType,rating.text)">
+            <div class="avatar">
+              <img width="28" height="28" :src="rating.avatar" >
+            </div>
+            <div class="content">
+              <h1 class="name">{{rating.username}}</h1>
+              <div class="star-wrapper">
+                <v-star :size="24" :score="rating.score"></v-star>
+                <span class="delivery" v-show="rating.deliveryTime">{{rating.deliveryTime}}分钟送达</span>
+              </div>
+              <p class="text">{{rating.text}}</p>
+              <div class="recommend" v-show="rating.recommend && rating.recommend.length">
+                <span class="icon-thumb_up"></span>
+                <span class="item" v-for="(item,index) in rating.recommend" :key="index">{{rating.recommend[index]}}</span>
+              </div>
+              <div class="time">{{rating.rateTime|format}}</div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import star from '../star/star';
+  import split from '../split/split';
+  import ratingselect from '../ratingselect/ratingselect';
+  import {formatDate} from '../../common/js/date';
+  import BScroll from 'better-scroll';
+
+  const ALL = 2;
+  const SUCESSES = 0;
   export default {
     props: {
       seller: {
         type: Object
       }
     },
+    data() {
+      return {
+        ratings: [],
+        selectType: ALL,
+        onlyContent: true
+      };
+    },
+    methods: {
+      needShow(type, text) {
+        if (this.foodShow === false) {
+          return;
+        }
+        if (this.onlyContent && !text) {
+          return false;
+        }
+        if (this.selectType === ALL) {
+          return true;
+        } else {
+          return this.selectType === type;
+        }
+      },
+      typeChange(type) {
+        this.selectType = type;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+      },
+      onlyContentChange() {
+        this.onlyContent = !this.onlyContent;
+        this.$nextTick(() => {
+          this.scroll.refresh();
+        });
+      }
+    },
+    filters: {
+      format(time) {
+        let date = new Date(time);
+        return formatDate(date, 'yyyy-MM-dd hh:mm');
+      }
+    },
+    created() {
+      this.$http.get('/api/ratings').then((response) => {
+        response = response.body;
+        if (response.errno === SUCESSES) {
+          this.ratings = response.data;
+          this.$nextTick(() => {
+            this.scroll = new BScroll(this.$refs.rating, {
+              click: true
+            });
+          });
+        }
+      });
+    },
     components: {
-      'v-star': star
+      'v-star': star,
+      'v-split': split,
+      'v-ratingselect': ratingselect
     }
   };
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+  @import "../../common/stylus/mixinn.styl";
   .rating
     position:absolute
     top:174px
@@ -111,4 +201,63 @@
             font-size:10px
             color:rgb(147,153,159)
 
+    .rating-wrapper
+      padding: 0 18px
+      .rating-item
+        display: flex
+        padding: 18px 0
+        border-1px(rgba(7,17,27,0.1))
+        .avatar
+          flex: 0 0 28px
+          width: 28px
+          margin-right: 12px
+          img
+            border-radius: 50%
+        .content
+          position: relative
+          flex: 1
+          .name
+            margin-bottom: 4px
+            line-height: 12px
+            font-size: 10px
+            color: rgb(7,17,27)
+          .star-wrapper
+            margin-bottom: 6px
+            font-size: 0
+            .star
+              display: inline-block
+              margin-right: 6px
+              vertical-align: top
+            .delivery
+              display: inline-block
+              vertical-align: top
+              font-size: 10px
+              color: rgb(147,153,159)
+          .text
+            margin-bottom: 8px
+            line-height: 18px
+            color: rgb(7,17,27)
+            font-size: 12px
+          .recommend
+            line-height: 16px
+            font-size: 0
+            .icon-thumb_up, .item
+              display: inline-block
+              margin: 0 8px 4px 0
+              font-size: 9px
+            .icon-thumb_up
+              color: rgb(0,160,220)
+            .item
+              padding: 0 6px
+              border: 1px solid rgba(7,17,27,0.1)
+              border-radius: 1px
+              color: rgb(147,153,159)
+              background: #fff
+          .time
+            position: absolute
+            top: 0
+            right: 0
+            line-height: 12px
+            font-size: 10px
+            color: rgb(147,153,159)
 </style>
