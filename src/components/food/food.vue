@@ -32,7 +32,7 @@
           <p class="text">{{food.info}}</p>
         </div>
         <v-split></v-split>
-        <div class="rating">
+        <div class="_rating">
           <h1 class="title">商品评价</h1>
           <v-ratingselect @typeChange="typeChange" @onlyContentChange="onlyContentChange" :desc="desc"
                           :ratings="food.ratings"
@@ -258,15 +258,15 @@
         padding:0 8px
         font-size:12px
         color: rgb(77,85,93)
-    .rating
-      padding-top:18px
+    ._rating
+      padding-top: 18px
       .title
-        line-height:14px
-        margin-left:18px
-        font-size:14px
-        color: rgb(7,17,27)
+        margin-left: 18px
+        line-height: 14px
+        font-size: 14px
+        color: rgb(7,17,27,)
       .rating-wrapper
-        padding:0 18px
+        padding: 0 18px
         .rating-item
           position: relative
           padding: 16px 0
@@ -274,36 +274,36 @@
           .user
             position: absolute
             right: 0
-            top:16px
-            line-height:12px
-            font-size:0
+            top: 16px
+            line-height: 12px
+            font-size: 0
             .name
               display: inline-block
-              margin-right:6px
+              margin-right: 6px
               vertical-align: top
-              font-size:10px
-              color: rgb(147,153,159)
+              font-size: 10px
+              color: rgb(147,157,159)
             .avatar
               border-radius: 50%
           .time
-            margin-bottom:6px
-            line-height:12px
+            margin-bottom: 6px
+            line-height: 12px
             font-size: 10px
-            color: rgb(147,153,159)
+            color: rgb(147,157,159)
           .text
-            line-height:16px
-            font-size:12px
+            line-height: 16px
+            font-size: 12px
             color: rgb(7,17,27)
             .icon-thumb_up,.icon-thumb_down
-              margin-right:4px
-              line-height:16px
-              font-size:12px
+              margin-right: 4px
+              line-height: 16px
+              font-size: 12px
             .icon-thumb_up
-              color:rgb(0,160,220)
+              color: rgb(0,160,220)
             .icon-thumb_down
-              color:rgb(147,153,159)
+              color: rgb(147,153,159)
         .no-rating
-          padding:16px 0
-          font-size:12px
-          color: rgb(77,85,93)
+          padding: 16px 0
+          font-size: 12px
+          color: rgb(147,153,159)
 </style>
