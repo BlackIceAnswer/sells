@@ -1,6 +1,6 @@
 # sells
 
-> A Vue.js project for qinbinyuan learning
+> A Vue.js project for qinbinyuan learning !
 
 ## Build Setup
 
