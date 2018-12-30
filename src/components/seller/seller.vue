@@ -26,6 +26,10 @@
               <span class="stress">{{seller.deliveryTime}}</span>元</div>
           </li>
         </ul>
+        <div class="favorite" @click="toggleFavorite">
+          <span class="icon-favorite" :class="{active:favorite}"></span>
+          <span class="text">{{favoriteText}}</span>
+        </div>
       </div>
       <v-split></v-split>
       <div class="bulletin">
@@ -56,6 +60,15 @@
           </ul>
         </div>
       </div>
+      <v-split></v-split>
+      <div class="info">
+        <h1 class="title">商家信息</h1>
+        <ul>
+          <li class="info-item" v-for="(info, key) in seller.infos" :key="key">
+            {{info}}
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -70,6 +83,18 @@
         type: Object
       }
     },
+    data() {
+      return {
+        favorite: (() => {
+          if (!window.localStorage.favorite) {
+            return false;
+          } else {
+            let favorite = JSON.parse(localStorage.favorite);
+            return favorite || false;
+          }
+        })()
+      };
+    },
     created() {
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
     },
@@ -81,7 +106,17 @@
         });
       }
     },
+    computed: {
+      favoriteText() {
+        return this.favorite ? '已收藏' : '收藏';
+      }
+    },
     methods: {
+      toggleFavorite() {
+        this.favorite = !this.favorite;
+        let storage = window.localStorage;
+        storage.favorite = this.favorite;
+      },
       _initScroll() {
         if (!this.scroll) {
           this.scroll = new BScroll(this.$refs.seller, {
@@ -173,6 +208,24 @@
             color: rgb(7,17,27)
             .stress
               font-size: 24px
+      .favorite
+        position: absolute
+        width: 50px
+        right: 11px
+        top: 18px
+        text-align:center
+        .icon-favorite
+          display: block
+          margin-bottom: 4px
+          line-height: 24px
+          font-size: 24px
+          color: #d4d6d9
+          &.active
+            color: rgb(240,20,20)
+        .text
+          line-height: 10px
+          font-size: 10px
+          color: rgb(77,85,93)
     .bulletin
       padding:18px 18px 0 18px
       .title
@@ -235,4 +288,19 @@
             height: 90px
             &:last-child
               margin: 0
+    .info
+      margin: 18px 18px 0 18px
+      .title
+        padding-bottom: 12px
+        line-height: 14px
+        border-1px(rgba(7,17,27,0.1))
+        color: rgb(7,17,27)
+        font-size: 14px
+      .info-item
+        padding: 16px 12px
+        line-height: 16px
+        border-1px(rgba(7,17,27,0.1))
+        font-size: 12px
+        &:last-child
+          border-none()
 </style>
