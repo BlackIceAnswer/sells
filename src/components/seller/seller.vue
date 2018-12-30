@@ -77,6 +77,7 @@
   import star from '../star/star';
   import split from '../split/split';
   import BScroll from 'better-scroll';
+  import {savaToLocal, loadFromlLocal} from '../../common/js/store';
   export default {
     props: {
       seller: {
@@ -86,12 +87,7 @@
     data() {
       return {
         favorite: (() => {
-          if (!window.localStorage.favorite) {
-            return false;
-          } else {
-            let favorite = JSON.parse(localStorage.favorite);
-            return favorite || false;
-          }
+          return loadFromlLocal(this.seller.id, 'favorite', false);
         })()
       };
     },
@@ -116,6 +112,7 @@
         this.favorite = !this.favorite;
         let storage = window.localStorage;
         storage.favorite = this.favorite;
+        savaToLocal(this.seller.id, 'favorite', this.favorite);
       },
       _initScroll() {
         if (!this.scroll) {
